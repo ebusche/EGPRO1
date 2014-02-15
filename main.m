@@ -12,7 +12,7 @@ function main(folder, srow, scol)
     %%
     % handling default parameters
     if( ~exist('folder') )
-	folder = '../capital9'; % no tailing slash!
+	folder = 'capital9'; % no tailing slash!
     end
     if( ~exist('srow') )
 	srow = 10;
@@ -21,40 +21,46 @@ function main(folder, srow, scol)
 	scol = 20;
     end
  
-    disp('loading images');
+    warning off;
+    
+    % loading images
     [images, exposures] = readInImages(folder);
     [row, col, channel, number] = size(images);
     ln_t = log(exposures);
-
-    disp('sampling images');
     
+    % align images
+    [alignment, images] = WardAlignment(images, 1, folder, 'jpg');
+    images = floor(images);
+    %
+    % for i = 1: number
+    %   img = images(:,:,:,i);
+    %   i
+    %end
+    
+    % sampling images
     simages = sample(images,srow,scol);
 
-    disp('calculating gsolve for each color channel.');
+    % calculating gsolve for each color channel
     g = zeros(256, 3);
    
     w = weightingFunction();
     w = w/max(w);
     
-    lamda = 10;
+    lambda = 10;
 
     for channel = 1:3
 	rsimages = reshape(simages(:,:,channel,:), srow*scol, number);
 	g(:,channel) = gsolve(rsimages, ln_t, lambda, w);
     end
     
-    tokens = strsplit('/', folder);
-	prefix = char(tokens(end));
-
-    disp('constructing HDR radiance map.');
+    % constructing HDR radiance map
     imgHDR = hdrDebevec(images, g, ln_t, w);
-    write_rgbe(imgHDR, [prefix '.hdr']);
+    write_rgbe(imgHDR, [folder '.hdr']);
 
-    disp('tone mapping');
-    imgTMO = tmoReinhard02(imgHDR, 'global', alpha_, 1e-6, white_);
-    write_rgbe(imgTMO, [prefix '_tone_mapped.hdr']);
-    imwrite(imgTMO, [prefix '_tone_mapped.png']);
+    %tone mapping and write tone mapped image
+     imgTMO  = tmoReinhard02(imgHDR);
+     imwrite(imgTMO, [folder '.png']);
+    % imgTMO  = DragoTMO(imgHDR);
+    % imwrite(imgTMO, [prefix '.png']);
 
-    disp('done!'m);
-    %exit();
 end
