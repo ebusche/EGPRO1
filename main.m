@@ -3,12 +3,9 @@
 %
 % input:
 %   folder: the (relative) path containing the image set.
-%   lambda: smoothness factor for gsolve.
 %   [srow scol]: the dimension of the resized image for sampling in gsolve.
-%   prefix: output LDR's prefix
-%
-function main(folder, srow, scol)
 
+function main(folder, srow, scol)
     %%
     % handling default parameters
     if( ~exist('folder') )
@@ -29,14 +26,9 @@ function main(folder, srow, scol)
     ln_t = log(exposures);
     
     % align images
-    [alignment, images] = WardAlignment(images, 1, folder, 'jpg');
+    [alignment, images] = alignImages(images, 1, folder, 'jpg');
     images = floor(images);
-    %
-    % for i = 1: number
-    %   img = images(:,:,:,i);
-    %   i
-    %end
-    
+  
     % sampling images
     simages = sample(images,srow,scol);
 
@@ -54,10 +46,10 @@ function main(folder, srow, scol)
     end
     
     % constructing HDR radiance map
-    imgHDR = hdrDebevec(images, g, ln_t, w);
+    imgHDR = convertToHDR(images, g, ln_t, w);
     write_rgbe(imgHDR, [folder '.hdr']);
 
-    %tone mapping and write tone mapped image
+    % tone mapping and write tone mapped image
      imgTMO  = tmoReinhard02(imgHDR);
      imwrite(imgTMO, [folder '.png']);
     % imgTMO  = DragoTMO(imgHDR);

@@ -1,4 +1,16 @@
-function imgHDR = hdrDebevec(images, g, ln_t, w)
+% This function will convert a set of images into HDR format
+%
+% Input:
+%   images: set of images
+%   g(z): log exposure corresponding to pixel value z
+%   ln_t(j): log delta t, or log shutter speed, for image j
+%   w(z): weighting function value for pizel value z
+%
+% Output:
+%   imgHDR: image in HDR format
+%
+
+function imgHDR = convertToHDR(images, g, ln_t, w)
     [row, col, channel, number] = size(images);
     ln_E = zeros(row, col, 3);
     for channel = 1:3
