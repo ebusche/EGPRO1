@@ -1,7 +1,5 @@
 function [alignment, stackOut] = alignImages(stack, bStackOut, dir_name, format, target_exposure)
-%       This function shifts pixels on the right with wrapping of the moved
-%       pixels. This can be used as rotation on the Y-axis for environment
-%       map encoded as longituted-latitude encoding.
+%       This function will align images using Ward MTB algorithm
 %
 %       Input:
 %           -stack: a stack (4D) containing all images.
@@ -82,7 +80,6 @@ for i=1:n
     shift_ret = [0, 0];
     
     if(i~=target_exposure)
-        % disp(['Aligning image ',num2str(i),' to image ',num2str(target_exposure)]);
         
         if(~bStack)
             imgWork = single(imread([dir_name,'/',lst(i).name]))/255;
@@ -356,9 +353,6 @@ ret=matrix(round(n*m*percentile));
 end
 
 function imgOut = imshift(img, is_dx, is_dy)
-%
-%		 imgOut = imshift(img, is_dx, is_dy)
-%
 %
 %		 Input:
 %           -img: an input image to be shifted
