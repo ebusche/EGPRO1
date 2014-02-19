@@ -17,13 +17,13 @@
 %
 
 function [ sampleImages ] = sample( images, gRows, gCols)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+
 
 dim = size(images);
 
-pgr = round(dim(1) / gRows);
-pgc = round(dim(2) / gCols);
+%determine size of grid
+pgr = floor(dim(1) / gRows);
+pgc = floor(dim(2) / gCols);
 
 % create sample matrix
 sampleImages = zeros(gRows, gCols, dim(3), dim(4));

@@ -1,9 +1,9 @@
 %
-% convert an image set into HDR, then tone mapping it.
+% convert an image set into HDR, then tone mapping the image.
 %
 % input:
 %   folder: the (relative) path containing the image set.
-%   [srow scol]: the dimension of the resized image for sampling in gsolve.
+%   [srow scol]: srow x scol is the number of points sampled for gsolve
 
 function main(folder, srow, scol)
     %%
@@ -49,10 +49,10 @@ function main(folder, srow, scol)
     imgHDR = convertToHDR(images, g, ln_t, w);
     write_rgbe(imgHDR, [folder '.hdr']);
 
-    % tone mapping and write tone mapped image
-     imgTMO  = tmoReinhard02(imgHDR);
-     imwrite(imgTMO, [folder '.png']);
-    % imgTMO  = DragoTMO(imgHDR);
-    % imwrite(imgTMO, [prefix '.png']);
+    % tone mapping using algorithm by Drago et al. 
+    imgTMO  = dragoToneMapping(imgHDR, 100, .7);
+    
+    % write tone mapped image
+    imwrite(imgTMO, [folder 'DTM.png']);
 
 end

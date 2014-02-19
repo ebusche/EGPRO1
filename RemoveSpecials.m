@@ -1,4 +1,4 @@
-function img=RemoveSpecials(img)
+function img=removeSpecials(img)
 %
 %
 %       img=RemoveSpecials(img)
